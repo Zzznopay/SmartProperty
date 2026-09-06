@@ -1,0 +1,124 @@
+# ===== SmartProperty 网关服务配置 =====
+# 网关不依赖 smart-property-common（避免 servlet 技术栈污染 WebFlux），
+# 因此共享的 nacos / jwt 配置在本文件内联一份，与 application-common.yml 保持同步。
+
+server:
+  port: 8000
+
+spring:
+  application:
+    name: smart-property-gateway
+  config:
+    import: optional:nacos:smart-property-gateway.yaml
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:nacos}
+        # 不能用 ENC(...)：nacos 在 ConfigData 阶段解析，早于解密器执行
+        password: ${NACOS_PASSWORD:123456}
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: smart-property-file
+              uri: lb://smart-property-system
+              predicates:
+                - Path=/api/v1/file/**
+            - id: smart-property-system
+              uri: lb://smart-property-system
+              predicates:
+                - Path=/api/v1/system/**,/api/v1/auth/**
+            - id: smart-property-property
+              uri: lb://smart-property-property
+              predicates:
+                - Path=/api/v1/property/**,/api/v1/finance/**
+            - id: smart-property-operation
+              uri: lb://smart-property-operation
+              predicates:
+                - Path=/api/v1/operation/**,/api/v1/admin/**
+
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:123456}
+      database: ${REDIS_DATABASE:0}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          enabled: false
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    redis:
+      enabled: true
+
+# Knife4j 聚合（统一文档入口：http://localhost:8000/doc.html）
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+  aggregation:
+    enable: true
+    cloud:
+      enable: true
+      routes:
+        - name: System
+          description: 系统基础服务
+          service-name: smart-property-system
+          location: /v3/api-docs?group=default
+          group: default
+        - name: Property
+          description: 房产财务服务
+          service-name: smart-property-property
+          location: /v3/api-docs?group=default
+          group: default
+        - name: Operation
+          description: 运营管理服务
+          service-name: smart-property-operation
+          location: /v3/api-docs?group=default
+          group: default
+    disk:
+      enable: false
+
+logging:
+  level:
+    org.springframework.cloud.gateway: info
+    com.smart.property: ${LOG_LEVEL:info}
+
+# ===== Sa-Token（网关统一鉴权；token 走 Authorization: Bearer xxx 头，会话存 Redis 与各服务共享） =====
+sa-token:
+  # token 名称（同时作为读取请求头的名字）
+  token-name: Authorization
+  # token 前缀：前端传 `Authorization: Bearer xxx`，框架自动剥离前缀
+  token-prefix: Bearer
+  # token 有效期（秒），与原 jwt.expiration 保持一致
+  timeout: 7200
+  # token 最低活跃频率（秒）；-1 代表不限制。配合 auto-renew 实现滑动续期
+  active-timeout: -1
+  auto-renew: true
+  # 不允许同一账号多地同时登录：新登录挤掉旧登录（与原单点 Token 语义一致）
+  is-concurrent: false
+  # token 风格
+  token-style: uuid
+  # 前后端分离：仅从请求头读取 token，不读写 Cookie
+  is-read-cookie: false
+  is-read-header: true
+  # 输出框架操作日志
+  is-log: true

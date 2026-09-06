@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.smart.property.common.core.encrypt.EncryptableEnvironmentPostProcessor

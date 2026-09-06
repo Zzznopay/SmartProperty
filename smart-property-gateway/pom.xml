@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.smart.property</groupId>
+        <artifactId>smart-property</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>smart-property-gateway</artifactId>
+    <name>API网关服务</name>
+
+    <dependencies>
+        <!-- Spring Cloud Gateway (Boot 4 / Spring Cloud 2025.1.x line) -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+        </dependency>
+
+        <!-- Nacos Discovery -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>${spring-cloud-alibaba.version}</version>
+        </dependency>
+
+        <!-- LoadBalancer -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+            <version>5.0.2</version>
+        </dependency>
+
+        <!-- Sentinel -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+            <version>${spring-cloud-alibaba.version}</version>
+        </dependency>
+
+        <!-- Sa-Token（Reactor 响应式集成，网关统一鉴权；会话数据存 Redis 与各服务共享） -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-reactor-spring-boot4-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-template</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+        <!-- Redis (servlet，用于 future blocker 调用) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <!-- Redis Reactive (用于 WebFlux 过滤器中 token 失效校验) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis-reactive</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <!-- Hutool（AES 配置解密） -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+
+        <!-- Knife4j 聚合（统一文档入口） -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-aggregation-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

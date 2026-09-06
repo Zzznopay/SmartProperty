@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Write(src/**)",
+      "Write(tests/**)",
+      "Write(docs/**)",
+      "Edit(src/**)",
+      "Edit(tests/**)",
+      "Bash(npm run *)",
+      "Bash(npx *)",
+      "Bash(yarn *)",
+      "Bash(pnpm *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ],
+	"deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Bash(curl * | *)",
+      "Bash(wget * | *)",
+      "Bash(git push *)",
+      "Bash(git reset --hard *)",
+      "Write(.env*)",
+      "Write(**/*.pem)",
+      "Write(**/*.key)"
+    ]
+	}
+}

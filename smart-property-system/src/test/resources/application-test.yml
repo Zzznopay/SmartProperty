@@ -1,0 +1,23 @@
+# ===== 系统服务 测试环境配置 =====
+# 公共连接配置由 common 的 application-common.yml 提供。
+
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/smart_property_system?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:123456}
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com.smart.property: debug

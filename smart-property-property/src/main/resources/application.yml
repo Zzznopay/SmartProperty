@@ -1,0 +1,69 @@
+# ===== SmartProperty 房产财务服务配置 =====
+# 共享配置由 classpath:application-common.yml 提供。
+
+server:
+  port: 8002
+
+spring:
+  application:
+    name: smart-property-property
+  config:
+    import: classpath:application-common.yml, optional:nacos:smart-property-property.yaml
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:smart_property_property}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:123456}
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: isDeleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# OpenFeign
+spring.cloud.openfeign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 5000
+        loggerLevel: basic
+  lazy-attributes-resolution: true
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    redis:
+      enabled: true
+    db:
+      enabled: true
+    rabbit:
+      enabled: true
+
+# Springdoc OpenAPI（Knife4j 4.5 拉取）
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  default-flat-param-object: true
+
+logging:
+  level:
+    com.smart.property: ${LOG_LEVEL:info}

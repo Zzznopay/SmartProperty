@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.smart.property</groupId>
+        <artifactId>smart-property</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>smart-property-operation</artifactId>
+    <name>运营管理服务</name>
+
+    <dependencies>
+        <!-- 公共模块 -->
+        <dependency>
+            <groupId>com.smart.property</groupId>
+            <artifactId>smart-property-common</artifactId>
+        </dependency>
+
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Spring Cloud -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- OpenFeign：跨服务调 system 上传文件 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- LoadBalancer：Feign 按服务名调用（lb://）必需 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+
+        <!-- Knife4j -->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>25</source>
+                    <target>25</target>
+                    <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.46</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>1.5.5.Final</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                        <arg>--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,82 @@
+# ===== SmartProperty 共享配置（不区分服务，集中一份维护） =====
+# 各服务 application.yml 通过 spring.config.import 引入本文件。
+# 所有 IP/账号/密码均通过 ${VAR:default} 占位，可由环境变量或 docker-compose env_file 覆盖。
+
+spring:
+  # ----- 数据库（占位默认值由各服务覆盖；不配置 = 不连接） -----
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # ----- Redis 连接 -----
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
+      password: ${REDIS_PASSWORD:123456}
+      timeout: ${REDIS_TIMEOUT:10s}
+
+  # ----- RabbitMQ -----
+  rabbitmq:
+    host: ${RABBITMQ_HOST:127.0.0.1}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:123456}
+    virtual-host: ${RABBITMQ_VHOST:/}
+
+  # ----- Nacos 注册 / 配置中心 -----
+  # 注意：Nacos 凭据不能用 ENC(...)。spring.config.import 的 nacos: 位置在
+  # ConfigData 阶段解析，早于 EncryptableEnvironmentPostProcessor 执行，
+  # 密文来不及解密就会被当作明文密码提交，导致 401。故改用环境变量占位符。
+  # 默认密码 123456：v3 首次打开控制台(:8080)时需将 admin 密码初始化为同值。
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:123456}
+      config:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:123456}
+        file-extension: yaml
+
+# ===== Sa-Token（会话数据存 Redis，网关与各服务共享；配置须与网关 application.yml 保持一致） =====
+sa-token:
+  # token 名称（同时作为读取请求头的名字）
+  token-name: Authorization
+  # token 前缀：前端传 `Authorization: Bearer xxx`，框架自动剥离前缀
+  token-prefix: Bearer
+  # token 有效期（秒），与原 jwt.expiration 保持一致
+  timeout: 7200
+  # token 最低活跃频率（秒）；-1 代表不限制。配合 auto-renew 实现滑动续期
+  active-timeout: -1
+  auto-renew: true
+  # 不允许同一账号多地同时登录：新登录挤掉旧登录（与原单点 Token 语义一致）
+  is-concurrent: false
+  # token 风格
+  token-style: uuid
+  # 前后端分离：仅从请求头读取 token，不读写 Cookie
+  is-read-cookie: false
+  is-read-header: true
+  # 输出框架操作日志
+  is-log: true
+
+# ----- MinIO -----
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://127.0.0.1:9000}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  # MinIO 密钥最少 8 位，123456 仅 6 位会导致启动失败
+  secret-key: ${MINIO_SECRET_KEY:12345678}
+  region: us-east-1
+  bucket: ${MINIO_BUCKET:smartproperty}
+  secure: false
+  path-style-access: true
+  presigned-expire-seconds: 3600
+  multipart:
+    part-size-bytes: 5242880
+    upload-threshold-bytes: 15728640
+
+# ----- 业务字段 AES 密钥（EncryptUtils） -----
+encrypt:
+  key: ${ENCRYPT_KEY:ENC(/eTLzR1TrARBRXV/VCzfv4VxM2u3INi2Zzc679ETKAk=)}

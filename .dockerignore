@@ -1,0 +1,46 @@
+# ===== SmartProperty Docker / IDE 排除文件 =====
+.git/
+.gitignore
+.gitattributes
+.github/
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+Thumbs.db
+
+# 构建产物
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.log
+logs/
+
+# 文档（不打包进镜像）
+doc/
+README.md
+CLAUDE.md
+*.md
+FINAL_REPORT.md
+PROJECT_STATUS.md
+
+# 配置/敏感（不打包进镜像；通过 env_file 注入）
+.env
+.env.*
+!.env.example
+deploy/
+deploy/**
+
+# 测试产物
+src/test/
+*Test.class
+
+# Docker 自身
+Dockerfile
+docker-compose*.yml
+.dockerignore

@@ -1,0 +1,54 @@
+# SmartProperty 微服务通用 Dockerfile
+# 用法: 在仓库根 mvn -pl <module> -am -DskipTests package 后，cd <module> && docker build -t <name>:tag .
+# 多阶段构建：builder (JDK 25 + Maven 3.9) → runtime (JRE 25)
+
+# ===== 阶段 1: 构建 =====
+FROM maven:3.9-eclipse-temurin-25 AS builder
+WORKDIR /workspace
+
+# 先 copy 全部 pom（缓存依赖层）
+COPY pom.xml ./
+COPY smart-property-common/pom.xml ./smart-property-common/
+COPY smart-property-gateway/pom.xml ./smart-property-gateway/
+COPY smart-property-system/pom.xml ./smart-property-system/
+COPY smart-property-property/pom.xml ./smart-property-property/
+COPY smart-property-operation/pom.xml ./smart-property-operation/
+
+# 预下载依赖（仅在 pom 变化时重跑）
+RUN mvn -B -q -DskipTests -pl smart-property-common -am dependency:go-offline || true
+
+# 复制源码并打包
+COPY smart-property-common/src ./smart-property-common/src
+COPY smart-property-gateway/src ./smart-property-gateway/src
+COPY smart-property-system/src ./smart-property-system/src
+COPY smart-property-property/src ./smart-property-property/src
+COPY smart-property-operation/src ./smart-property-operation/src
+
+ARG MODULE=smart-property-gateway
+RUN mvn -B -DskipTests -pl ${MODULE} -am package
+
+# ===== 阶段 2: 运行时 =====
+FROM eclipse-temurin:25-jre
+WORKDIR /app
+
+ARG MODULE=smart-property-gateway
+ARG JAR_NAME=app.jar
+
+# 从 builder 拷贝最终 fat jar
+COPY --from=builder /workspace/${MODULE}/target/${MODULE}.jar /app/${JAR_NAME}
+
+# 创建非 root 用户
+RUN groupadd -r spring && useradd -r -g spring spring \
+    && mkdir -p /tmp/upload \
+    && chown -R spring:spring /app /tmp/upload
+USER spring:spring
+
+ENV JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseContainerSupport -Duser.timezone=Asia/Shanghai -Dfile.encoding=UTF-8"
+ENV SPRING_PROFILES_ACTIVE=""
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=60s --retries=5 \
+    CMD wget -qO- http://localhost:8000/actuator/health 2>/dev/null | grep -q '"status":"UP"' || exit 1
+
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/${JAR_NAME}"]
