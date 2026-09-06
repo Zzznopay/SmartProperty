@@ -59,7 +59,7 @@ logs/
 *.tmp
 
 # Docker / 部署敏感配置
-.env
+.env.temple
 .env.example
 .env.local
 *.local

@@ -46,7 +46,7 @@ mvn -pl smart-property-system test
 mvn -pl smart-property-system -am spring-boot:run > /tmp/sp-system.log 2>&1 &
 
 # Docker Compose 全栈一键启动（4 业务 + 5 中间件）
-cp .env.example .env && docker compose up -d
+cp .env.temple.example .env.temple && docker compose up -d
 ```
 
 - 健康检查：`curl http://localhost:8001/actuator/health`（各服务同理，端口见上表）。

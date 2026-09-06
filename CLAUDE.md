@@ -122,7 +122,7 @@ mvn test               # 运行测试
 ### 中间件（Docker Compose 统一编排）
 
 本地开发不直接安装 MySQL/Redis 等中间件，全部由 `deploy/docker-compose.middleware.yml` 启动；
-服务端配置默认连 `127.0.0.1`（可用环境变量或 `.env` 覆盖，见 `.env.example`）。
+服务端配置默认连 `127.0.0.1`（可用环境变量或 `.env.temple` 覆盖，见 `.env.example`）。
 
 ```bash
 cd /Users/zzz/Documents/work/SmartProperty/deploy

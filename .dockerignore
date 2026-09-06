@@ -30,7 +30,7 @@ FINAL_REPORT.md
 PROJECT_STATUS.md
 
 # 配置/敏感（不打包进镜像；通过 env_file 注入）
-.env
+.env.temple
 .env.*
 !.env.example
 deploy/

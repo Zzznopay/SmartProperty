@@ -43,8 +43,8 @@
 
 ```bash
 # 1. 复制环境变量模板
-cp .env.example .env
-# 编辑 .env，至少修改 MYSQL_ROOT_PASSWORD / NACOS_PASSWORD / MINIO_SECRET_KEY / SMART_PROPERTY_SECRET_KEY
+cp .env.temple.example .env.temple
+# 编辑 .env.temple，至少修改 MYSQL_ROOT_PASSWORD / NACOS_PASSWORD / MINIO_SECRET_KEY / SMART_PROPERTY_SECRET_KEY
 
 # 2. 一键启动（4 业务 + 5 中间件：MySQL/Redis/Nacos/RabbitMQ/MinIO）
 docker compose up -d
