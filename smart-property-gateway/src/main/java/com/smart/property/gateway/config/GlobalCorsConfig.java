@@ -26,12 +26,11 @@ public class GlobalCorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         // 允许凭证（前端读取 token / 自定义头需要）
         config.setAllowCredentials(true);
-        // 本地开发常见来源；生产环境应改为实际前端域名
+        // 本地开发常见来源（端口通配：dev 5173 / 网关直调 3000 / 部署站点 18081 等）；
+        // 生产环境应改为实际前端域名
         config.setAllowedOriginPatterns(List.of(
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "http://127.0.0.1:5173",
-                "http://127.0.0.1:3000"
+                "http://localhost:*",
+                "http://127.0.0.1:*"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
