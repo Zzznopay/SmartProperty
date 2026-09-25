@@ -14,10 +14,12 @@ jobs:
         run: mvn -B package -DskipTests
       - name: Upload artifact to Suiren
         run: |
-          VERSION="${GITEA_REF_NAME##*/}"
+          # act 里 GITHUB_REF_NAME 为短名（main 或 tag 名）；兜底防空值
+          VERSION="${GITHUB_REF_NAME##*/}"
+          VERSION="${VERSION:-unknown}"
           FILE=$(find . -maxdepth 3 -path "*/target/*.jar" -type f | head -n 1)
           if [ -z "$FILE" ]; then echo "no artifact file found (check the artifact glob)" >&2; exit 1; fi
-          curl -sf -X POST "$SUIREN_URL/api/v1/artifacts/upload" \
+          curl -sS --fail-with-body -X POST "$SUIREN_URL/api/v1/artifacts/upload" \
             -H "Authorization: Bearer $SUIREN_TOKEN" \
             -F "applicationId=4" \
             -F "version=$VERSION-SNAPSHOT" \
