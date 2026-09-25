@@ -15,7 +15,7 @@ jobs:
       - name: Upload artifact to Suiren
         run: |
           VERSION="${GITEA_REF_NAME#v}"
-          FILE=$(ls target/*.jar */target/*.jar 2>/dev/null | head -n 1)
+          FILE=$(find . -maxdepth 3 -path "*/target/*.jar" -type f | head -n 1)
           if [ -z "$FILE" ]; then echo "no artifact file found (check the artifact glob)" >&2; exit 1; fi
           curl -sf -X POST "$SUIREN_URL/api/v1/artifacts/upload" \
             -H "Authorization: Bearer $SUIREN_TOKEN" \
